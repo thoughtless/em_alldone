@@ -12,15 +12,28 @@ success or failure. Doesn't support errbacks.
 
 A quick example:
 
+    require 'eventmachine'
     require 'em_alldone'
 
     d1 = EM::DefaultDeferrable.new
     d2 = EM::DefaultDeferrable.new
-    EmAlldone.new(d1, d2) do
-      puts "All done"
+    EmAlldone.new(d1, d2) do |arg|
+      puts "All done #{arg}"
     end
-    d1.succeed # Nothing happens
-    d2.succeed # Prints out "All done"
+    d2.succeed 2 # Nothing happens
+    d1.succeed 1 # Prints out "All done 2"
+
+    d1 = EM::DefaultDeferrable.new
+    d2 = EM::DefaultDeferrable.new
+    str = "Hello"
+    d1.callback do
+      str.upcase!
+    end
+    EmAlldone.with([d1, d2], str) do |arg|
+      puts "All done #{arg}"
+    end
+    d2.succeed 2 # Nothing happens
+    d1.succeed 1 # Prints out "All done HELLO"
 
 
 == REQUIREMENTS:
@@ -32,8 +45,7 @@ gem installed and required.
 
 == INSTALL:
 
-TODO
-
+    gem install em_alldone
 
 == RUNNING THE SPECS:
 

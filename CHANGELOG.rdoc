@@ -1,3 +1,7 @@
+=== 0.0.2 / 2014-07-31
+
+* Add EmAlldone.with for setting the arguments passed to the callback.
+
 === 0.0.1 / 2014-07-31
 
 * Initial commit

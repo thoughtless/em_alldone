@@ -52,4 +52,41 @@ describe EmAlldone do
       @it_ran.should be_true
     end
   end
+
+  context "the arguments to the callback" do
+    let(:d1) { EM::DefaultDeferrable.new }
+    let(:d2) { EM::DefaultDeferrable.new }
+    before do
+      EmAlldone.new(d1, d2) do |*args|
+        @it_ran = args
+      end
+    end
+
+    context "implicitly set" do
+      it "is the arguments of the last deferrable's succeed" do
+        d2.succeed 2, "two"
+        d1.succeed 1
+        @it_ran.should == [2, "two"]
+      end
+
+      it "is the arguments of the last deferrable's fail" do
+        d1.fail 1, "one"
+        d2.fail 2
+        @it_ran.should == [2]
+      end
+    end
+
+    context "explicitly set" do
+      it "is the explicitly set argements" do
+        EmAlldone.with([d1, d2], "explicitly", :set) do |*args|
+          @it_ran = args
+        end
+
+        d1.succeed 1
+        d2.fail 2, "two"
+
+        @it_ran.should == ["explicitly", :set]
+      end
+    end
+  end
 end
